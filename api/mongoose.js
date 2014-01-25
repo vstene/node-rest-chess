@@ -6,9 +6,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/chess-rest', function(err) {
     }
 });
 
-global.mongoose = mongoose;
-
 // Load all models
 require("fs").readdirSync(__dirname + "/models").forEach(function(file) {
-    require("./models/" + file);
+    require("./models/" + file)(mongoose);
 });
+
+module.exports = mongoose;

@@ -4,11 +4,11 @@ var TokenController = require('./controllers/token')
 
 exports.init = function(server, mongoose) {
 
-    server.get('/game/:gameId', GameController.read);
-    server.post('/game', GameController.create);
+    server.get('/game/:gameId', GameController.read(mongoose));
+    server.post('/game', GameController.create(mongoose));
 
-    server.use(TokenController.verify);
+    server.use(TokenController.verify(mongoose));
 
-    server.get('/game/:gameId/move/:moveNumber', MoveController.read);
-    server.post('/game/:gameId/move/:moveNumber', MoveController.create);
+    server.get('/game/:gameId/move/:moveNumber', MoveController.read(mongoose));
+    server.post('/game/:gameId/move/:moveNumber', MoveController.create(mongoose));
 }
