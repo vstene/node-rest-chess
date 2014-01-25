@@ -5,7 +5,7 @@ var mongoose = require('./mongoose')
 require('array.prototype.find');
 
 var server = restify.createServer({
-    name: 'node-chess-api'
+    name: 'node-rest-chess'
 });
 
 server.use(restify.acceptParser(server.acceptable));

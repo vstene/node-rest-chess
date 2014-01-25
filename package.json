@@ -1,5 +1,5 @@
 {
-  "name": "node-chess-api",
+  "name": "node-rest-chess",
   "version": "0.0.1",
   "description": "A simple RESTful API for playing chess",
   "main": "app.js",
