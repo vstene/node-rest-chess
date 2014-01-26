@@ -1,0 +1,4 @@
+{
+    "port": 34433,
+    "db": "mongodb://127.0.0.1:27017/chess-rest-test"
+}
