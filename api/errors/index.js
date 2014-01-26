@@ -14,4 +14,12 @@ function ServiceUnavailable(message) {
 
 util.inherits(ServiceUnavailable, restify.RestError);
 
-exports.ServiceUnavailable = ServiceUnavailable;
+module.exports = {
+    BadRequest         : restify.InvalidContentError,
+    NotFound           : restify.ResourceNotFoundError,
+    NotAuthorized      : restify.NotAuthorizedError,
+    InvalidContent     : restify.InvalidContentError,
+    InvalidCredentials : restify.InvalidCredentialsError,
+    Internal           : restify.InternalError,
+    ServiceUnavailable : ServiceUnavailable
+}

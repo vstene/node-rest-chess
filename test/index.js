@@ -4,7 +4,6 @@ var request = require('supertest')
   , config  = require('../config/' + process.env.NODE_ENV)
   , mongoose = require('mongoose');
 
-// Custom Errors
 var ServiceUnavailable = require('../api/errors/').ServiceUnavailable
 
 describe('Game Controller', function() {

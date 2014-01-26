@@ -1,9 +1,4 @@
-var BadRequest          = require('restify').InvalidContentError
-  , NotFound            = require('restify').ResourceNotFoundError
-  , NotAuthorized       = require('restify').NotAuthorizedError
-  , InvalidContent      = require('restify').InvalidContentError
-  , Internal            = require('restify').InternalError
-  , ServiceUnavailable  = require('../errors/').ServiceUnavailable;
+var Error = require('../errors');
 
 var Chess = require('chess.js').Chess;
 
@@ -14,7 +9,7 @@ exports.read = function(mongoose) {
         if (moveExists !== undefined) {
             res.json(req.game.moves[req.params.moveNumber]);
         } else {
-            return next(new NotFound('Requested move number has not been played.'));
+            return next(new Error.NotFound('Requested move number has not been played.'));
         }
     }
 }
@@ -27,25 +22,25 @@ exports.create = function(mongoose) {
           , moveObject, moveExists, move, mongoMove;
 
         if (typeof req.body === 'undefined') {
-            return next(new BadRequest('Need to have a move payload.'));
+            return next(new Error.BadRequest('Need to have a move payload.'));
         } else if (chess.turn() !== req.color) {
-            return next(new NotAuthorized('It is not your turn.'));
+            return next(new Error.NotAuthorized('It is not your turn.'));
         } else if (req.game.moves.length !== req.params.moveNumber) {
-            return next(new BadRequest('Requested move number is not the next move number.'));
+            return next(new Error.BadRequest('Requested move number is not the next move number.'));
         }
 
         moveObject = exports.createMoveObject(req.body);
 
         if (moveObject === null) {
-            return next(new BadRequest('A valid move payload is required.'));
+            return next(new Error.BadRequest('A valid move payload is required.'));
         } else if (req.game.moves.find(function(i) { return i.number === req.params.moveNumber; }) !== undefined) {
-            return next(new BadRequest('Move is already made, can not update.'));
+            return next(new Error.BadRequest('Move is already made, can not update.'));
         }
 
         move = chess.move(moveObject);
 
         if (move === null) {
-            return next(new InvalidContent('Move is not valid.'));
+            return next(new Error.InvalidContent('Move is not valid.'));
         }
 
         mongoMove = {
@@ -57,11 +52,11 @@ exports.create = function(mongoose) {
 
         Game.findByIdAndUpdate(req.game._id, { fen: chess.fen(), $push: { moves: mongoMove } }, { upsert: true }, function(err, game) {
             if (err) {
-                return next(new ServiceUnavailable('Could not save move to database, try again later.'));
+                return next(new Error.ServiceUnavailable('Could not save move to database, try again later.'));
             }
 
             if (game === 0) {
-                return next(new Internal('Unknown server error.'));
+                return next(new Error.Internal('Unknown server error.'));
             }
 
             res.send(mongoMove);
