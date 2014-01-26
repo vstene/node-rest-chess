@@ -1,3 +1,5 @@
+'use strict';
+
 var config   = require('../config/' + process.env.NODE_ENV)
   , mongoose = require('./mongoose')(config.db)
   , routes   = require('./routes')

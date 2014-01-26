@@ -1,10 +1,12 @@
+'use strict';
+
 var request = require('supertest')
   , should  = require('should')
   , app     = require('../app')
   , config  = require('../config/' + process.env.NODE_ENV)
   , mongoose = require('mongoose');
 
-var ServiceUnavailable = require('../api/errors/').ServiceUnavailable
+var ServiceUnavailable = require('../api/errors/').ServiceUnavailable;
 
 describe('Game Controller', function() {
     var game;
@@ -13,7 +15,7 @@ describe('Game Controller', function() {
         var connection = mongoose.createConnection(config.db, function(err) {
             should.not.exists(err);
             connection.db.dropDatabase(function(err) {
-               should.not.exists(err);
+                should.not.exists(err);
 
                 // Create a game
                 request(app).post('/game').end(function(err, result) {
@@ -30,10 +32,10 @@ describe('Game Controller', function() {
             var errorMessage = 'Service Unavailable error message'
               , serviceUnavailable = new ServiceUnavailable(errorMessage);
 
-              serviceUnavailable.should.have.status(503);
-              serviceUnavailable.message.should.be.exactly(errorMessage);
+            serviceUnavailable.should.have.status(503);
+            serviceUnavailable.message.should.be.exactly(errorMessage);
 
-              done();
+            done();
         });
     });
 
@@ -58,9 +60,6 @@ describe('Game Controller', function() {
             .end(function(err, result) {
                 should.not.exists(err);
                 result.body.should.have.keys(['blackToken', 'whiteToken', '_id', 'fen', 'moves']);
-
-                // Save id for next test
-                gameId = result.body._id;
 
                 done();
             });
@@ -167,7 +166,7 @@ describe('Game Controller', function() {
             var successPayloads = [{ move: 'e4'}, {from: 'e2', to: 'e4'}, {from: 'e2', to: 'e4', promotion: 'b'}];
             var successResults  = ['e4', {from: 'e2', to: 'e4'}, {from: 'e2', to: 'e4', promotion: 'b'}];
 
-            errorPayloads.forEach(function(element, index) {
+            errorPayloads.forEach(function(element) {
                 var moveObject = createMoveObject(element);
 
                 should(moveObject).be.exactly(null);

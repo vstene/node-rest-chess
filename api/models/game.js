@@ -1,3 +1,5 @@
+'use strict';
+
 var crypto = require('crypto');
 
 module.exports = function(mongoose) {
@@ -23,4 +25,4 @@ module.exports = function(mongoose) {
     });
 
     mongoose.model('Game', Game);
-}
+};

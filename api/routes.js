@@ -1,3 +1,5 @@
+'use strict';
+
 var TokenController = require('./controllers/token')
   , GameController  = require('./controllers/game')
   , MoveController  = require('./controllers/move');
@@ -28,10 +30,10 @@ exports.init = function(server, mongoose) {
         req.params.moveNumber = parseInt(req.params.moveNumber, 10);
 
         next();
-    })
+    });
 
     server.use(TokenController.verify(mongoose));
 
-    server.get('/game/:gameId/move/:moveNumber', MoveController.read(mongoose));
+    server.get('/game/:gameId/move/:moveNumber', MoveController.read);
     server.post('/game/:gameId/move/:moveNumber', MoveController.create(mongoose));
-}
+};

@@ -1,7 +1,8 @@
+'use strict';
+
 var mongoose = require('mongoose');
 
 module.exports = function(mongoPath) {
-
     mongoose.connect(mongoPath, function(err) {
         if (err) {
             throw new Error(err);
@@ -9,9 +10,9 @@ module.exports = function(mongoPath) {
     });
 
     // Load all models
-    require("fs").readdirSync(__dirname + "/models").forEach(function(file) {
-        require("./models/" + file)(mongoose);
+    require('fs').readdirSync(__dirname + '/models').forEach(function(file) {
+        require('./models/' + file)(mongoose);
     });
 
     return mongoose;
-}
+};
