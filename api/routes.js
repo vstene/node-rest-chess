@@ -2,7 +2,7 @@ var TokenController = require('./controllers/token')
   , GameController  = require('./controllers/game')
   , MoveController  = require('./controllers/move');
 
-var BadRequest = require('restify').InvalidContentError;
+var BadRequest = require('./errors/').BadRequest;
 
 exports.init = function(server, mongoose) {
 
