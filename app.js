@@ -1,1 +1,1 @@
-var app = require('./api');
+module.exports = require('./api');
