@@ -7,16 +7,20 @@ var request = require('supertest')
 var ServiceUnavailable = require('../api/errors/').ServiceUnavailable
 
 describe('Game Controller', function() {
-    var connection = mongoose.createConnection(config.db)
-      , game;
+    var game;
 
     before(function (done) {
-        connection.db.dropDatabase(function(err) {
-            // Create a game
-            request(app).post('/game').end(function(err, result) {
-                should.not.exists(err);
-                game = result.body;
-                done();
+        var connection = mongoose.createConnection(config.db, function(err) {
+            should.not.exists(err);
+            connection.db.dropDatabase(function(err) {
+               should.not.exists(err);
+
+                // Create a game
+                request(app).post('/game').end(function(err, result) {
+                    should.not.exists(err);
+                    game = result.body;
+                    done();
+                });
             });
         });
     });
