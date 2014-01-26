@@ -19,7 +19,6 @@ describe('Game Controller', function() {
                 done();
             });
         });
-
     });
 
     describe('#customError', function() {
@@ -46,7 +45,6 @@ describe('Game Controller', function() {
             .get('/game/52e30a2a4e8b8e901928318a')
             .expect(404, done);
         });
-
     });
 
     describe('POST /game', function() {
@@ -76,6 +74,7 @@ describe('Game Controller', function() {
             });
         });
 
+        // Not 404 because we have a invalid token or invalid game id
         it('Should have status 401 if token does not match whiteToken or blackToken', function(done) {
             request(app)
             .post('/game/' + game._id + '/move/0')
@@ -86,9 +85,7 @@ describe('Game Controller', function() {
                 done();
             });
         });
-
     });
-
 
     describe('Move', function() {
         it('Should have status 400 if gameId is not a valid ObjectId', function(done) {
@@ -113,7 +110,6 @@ describe('Game Controller', function() {
             });
         });
 
-        // Not 404 because we have a invalid token or invalid game id
         it('Should have status 400 if game does not exists', function(done) {
             request(app)
             .post('/game/52e4447ad862976f3e574c75/move/0')
@@ -266,5 +262,4 @@ describe('Game Controller', function() {
             });
         });
     });
-
 });
