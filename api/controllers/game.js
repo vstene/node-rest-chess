@@ -1,3 +1,7 @@
+var BadRequest           = require('restify').InvalidContentError
+  , NotFound             = require('restify').ResourceNotFoundError
+  , ServiceUnavailable   = require('../errors/').ServiceUnavailable;
+
 exports.read = function(mongoose) {
     var Game = mongoose.model('Game');
 
@@ -5,16 +9,16 @@ exports.read = function(mongoose) {
         try {
             var id = new mongoose.Types.ObjectId(req.params.gameId);
         } catch (err) {
-            return next(res.send(400, new Error('The game id is not valid.')));
+            return next(new BadRequest('The game id is not valid.'));
         }
 
         Game.findById(id, function(err, game) {
             if (err) {
-                return next(res.send(503, new Error('Could not fetch game, try again later.')));
+                return next(new ServiceUnavailable('Could not fetch game, try again later.'));
             }
 
             if (game === null) {
-                return next(res.send(404, new Error('Could not find game.')));
+                return next(new NotFound('Could not find game.'));
             }
 
             res.json(game);

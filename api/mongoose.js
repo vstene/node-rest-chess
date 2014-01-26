@@ -1,14 +1,17 @@
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/chess-rest', function(err) {
-    if (err) {
-        throw new Error(err);
-    }
-});
+module.exports = function(mongoPath) {
 
-// Load all models
-require("fs").readdirSync(__dirname + "/models").forEach(function(file) {
-    require("./models/" + file)(mongoose);
-});
+    mongoose.connect(mongoPath, function(err) {
+        if (err) {
+            throw new Error(err);
+        }
+    });
 
-module.exports = mongoose;
+    // Load all models
+    require("fs").readdirSync(__dirname + "/models").forEach(function(file) {
+        require("./models/" + file)(mongoose);
+    });
+
+    return mongoose;
+}

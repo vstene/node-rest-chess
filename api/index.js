@@ -1,9 +1,11 @@
-var mongoose = require('./mongoose')
+var config   = require('../config/' + process.env.NODE_ENV)
+  , mongoose = require('./mongoose')(config.db)
   , routes   = require('./routes')
   , restify  = require('restify');
 
 require('array.prototype.find');
 
+// Set up server
 var server = restify.createServer({
     name: 'node-rest-chess'
 });
@@ -18,7 +20,9 @@ server.on('error', function(err) {
     console.log(err);
 });
 
-server.listen(9999, '127.0.0.1', function() {
+server.listen(config.port, '127.0.0.1', function() {
     console.log('%s listening at %s', server.name, server.url);
 });
 
+
+module.exports = server;

@@ -1,18 +1,11 @@
+var BadRequest          = require('restify').InvalidContentError
+  , NotFound            = require('restify').ResourceNotFoundError
+  , NotAuthorized       = require('restify').NotAuthorizedError
+  , InvalidContent      = require('restify').InvalidContentError
+  , Internal            = require('restify').InternalError
+  , ServiceUnavailable  = require('../errors/').ServiceUnavailable;
+
 var Chess = require('chess.js').Chess;
-
-function createMoveObject(body) {
-    if (body.to && move.from) {
-        var ret = {
-            to: body.to,
-            from: body.from,
-            promotion: body.promotion || undefined
-        };
-    } else if (body.move) {
-        return body.move.toString();
-    }
-
-    return null;
-}
 
 exports.read = function(mongoose) {
     return function(req, res, next) {
@@ -21,7 +14,7 @@ exports.read = function(mongoose) {
         if (moveExists !== undefined) {
             res.json(req.game.moves[req.params.moveNumber]);
         } else {
-            return next(res.send(404, new Error('Move number ' + req.params.moveNumber + ' is not played.')));
+            return next(new NotFound('Requested move number has not been played.'));
         }
     }
 }
@@ -31,24 +24,28 @@ exports.create = function(mongoose) {
 
     return function(req, res, next) {
         var chess = new Chess(req.game.fen)
-        , moveObject = createMoveObject(req.body)
-        , moveExists = req.game.moves.find(function(i) { return i.number === req.params.moveNumber; })
-        , move, mongoMove;
+          , moveObject, moveExists, move, mongoMove;
 
-        if (chess.turn() !== req.color) {
-            return next(res.send(403, new Error('It is not your turn.')));
+        if (typeof req.body === 'undefined') {
+            return next(new BadRequest('Need to have a move payload.'));
+        } else if (chess.turn() !== req.color) {
+            return next(new NotAuthorized('It is not your turn.'));
         } else if (req.game.moves.length !== req.params.moveNumber) {
-            return next(res.send(400, new Error('Move number ' + req.params.moveNumber + ' is not the next move number.')));
-        } else if (moveObject === null) {
-            return next(res.send(400, new Error('A move is required.')));
-        } else if (moveExists !== undefined) {
-            return next(res.json(409, req.game.moves[req.params.moveNumber]));
+            return next(new BadRequest('Requested move number is not the next move number.'));
+        }
+
+        moveObject = exports.createMoveObject(req.body);
+
+        if (moveObject === null) {
+            return next(new BadRequest('A valid move payload is required.'));
+        } else if (req.game.moves.find(function(i) { return i.number === req.params.moveNumber; }) !== undefined) {
+            return next(new BadRequest('Move is already made, can not update.'));
         }
 
         move = chess.move(moveObject);
 
         if (move === null) {
-            return next(res.send(400, new Error('Move is not valid.')));
+            return next(new InvalidContent('Move is not valid.'));
         }
 
         mongoMove = {
@@ -60,15 +57,34 @@ exports.create = function(mongoose) {
 
         Game.findByIdAndUpdate(req.game._id, { fen: chess.fen(), $push: { moves: mongoMove } }, { upsert: true }, function(err, game) {
             if (err) {
-                return next(res.send(503, new Error('Could not save move to database, try again later.')));
+                return next(new ServiceUnavailable('Could not save move to database, try again later.'));
             }
 
             if (game === 0) {
-                return next(res.send(500, new Error('Unknown server error.')));
+                return next(new Internal('Unknown server error.'));
             }
 
             res.send(mongoMove);
         });
     }
+}
+
+exports.createMoveObject = function(body) {
+    if (body.from && body.to) {
+        var ret = {
+            from: body.from,
+            to: body.to
+        };
+
+        if (body.promotion) {
+            ret.promotion = body.promotion;
+        }
+
+        return ret;
+    } else if (body.move && typeof body.move === 'string' && body.move.length >= 2) {
+        return body.move.toString();
+    }
+
+    return null;
 }
 
