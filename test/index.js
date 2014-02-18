@@ -21,6 +21,7 @@ describe('Game Controller', function() {
                 request(app).post('/game').end(function(err, result) {
                     should.not.exists(err);
                     game = result.body;
+
                     done();
                 });
             });
@@ -73,6 +74,7 @@ describe('Game Controller', function() {
             .expect(401, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('No authentication token was provided.');
+
                 done();
             });
         });
@@ -85,6 +87,7 @@ describe('Game Controller', function() {
             .expect(401, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('The provided authentication token was not valid.');
+
                 done();
             });
         });
@@ -98,6 +101,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Invalid Game Id');
+
                 done();
             });
         });
@@ -109,6 +113,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Invalid Move Number');
+
                 done();
             });
         });
@@ -120,6 +125,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Could not find game.');
+
                 done();
             });
         });
@@ -131,6 +137,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Need to have a move payload.');
+
                 done();
             });
         });
@@ -143,6 +150,7 @@ describe('Game Controller', function() {
             .expect(403, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('It is not your turn.');
+
                 done();
             });
         });
@@ -155,6 +163,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Requested move number is not the next move number.');
+
                 done();
             });
         });
@@ -189,6 +198,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('A valid move payload is required.');
+
                 done();
             });
         });
@@ -201,6 +211,7 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Move is not valid.');
+
                 done();
             });
         });
@@ -278,6 +289,20 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Can not offer draw when the move is played, wait for your turn.');
+
+                done();
+            });
+        });
+
+        it('Should not receive a draw offer if it is not your turn', function(done) {
+            request(app)
+            .post('/game/' + game._id + '/move/2/action')
+            .send({ action: 'offerDraw' })
+            .set('X-Auth-Token', game.blackToken)
+            .expect(403, function(err, result) {
+                should.not.exists(err);
+                result.body.message.should.be.exactly('It is not your turn.');
+
                 done();
             });
         });
