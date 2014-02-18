@@ -14,7 +14,7 @@ exports.init = function(server, mongoose) {
     // Verify parameters
     server.use(function(req, res, next) {
         if (!req.params.gameId || !req.params.moveNumber) {
-            return next(new BadRequest('Game Id and Move Number is requried'));
+            return next(new BadRequest('Game Id and Move Number is required'));
         }
 
         try {
