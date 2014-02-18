@@ -8,7 +8,7 @@ exports.verify = function(mongoose) {
     return function(req, res, next) {
         // Check if a token is provided
         if (typeof req.headers['x-auth-token'] === 'undefined') {
-            return next(new Errors.InvalidCredentials('No authentication token was provided'));
+            return next(new Errors.InvalidCredentials('No authentication token was provided.'));
         }
 
         req.token = req.headers['x-auth-token'];
