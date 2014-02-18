@@ -3,7 +3,7 @@
 var Errors = require('../errors')
   , Chess = require('chess.js').Chess;
 
-exports.create = function(mongoose) {
+exports.update = function(mongoose) {
     var Game = mongoose.model('Game');
 
     return function(req, res, next) {
@@ -21,6 +21,7 @@ exports.create = function(mongoose) {
         } else if (req.game.moves.length !== req.params.moveNumber) {
             return next(new Errors.BadRequest('Requested move number is not the next move number.'));
         }
+
 
         next();
     };

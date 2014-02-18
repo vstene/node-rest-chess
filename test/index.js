@@ -283,7 +283,7 @@ describe('Game Controller', function() {
     describe('Move action', function() {
         it('Should not receive a draw offer if the move has been played', function(done) {
             request(app)
-            .post('/game/' + game._id + '/move/1/action')
+            .put('/game/' + game._id + '/move/1')
             .send({ action: 'offerDraw' })
             .set('X-Auth-Token', game.whiteToken)
             .expect(400, function(err, result) {
@@ -296,7 +296,7 @@ describe('Game Controller', function() {
 
         it('Should not receive a draw offer if it is not your turn', function(done) {
             request(app)
-            .post('/game/' + game._id + '/move/2/action')
+            .put('/game/' + game._id + '/move/2')
             .send({ action: 'offerDraw' })
             .set('X-Auth-Token', game.blackToken)
             .expect(403, function(err, result) {
@@ -309,7 +309,7 @@ describe('Game Controller', function() {
 
         it('Should not receive a draw offer if it is my turn and the selected is not next move', function(done) {
             request(app)
-            .post('/game/' + game._id + '/move/4/action')
+            .put('/game/' + game._id + '/move/4')
             .send({ action: 'offerDraw' })
             .set('X-Auth-Token', game.whiteToken)
             .expect(400, function(err, result) {

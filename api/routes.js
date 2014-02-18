@@ -38,5 +38,5 @@ exports.init = function(server, mongoose) {
     server.get('/game/:gameId/move/:moveNumber', MoveController.read);
     server.post('/game/:gameId/move/:moveNumber', MoveController.create(mongoose));
 
-    server.post('/game/:gameId/move/:moveNumber/action', ActionController.create(mongoose));
+    server.put('/game/:gameId/move/:moveNumber', ActionController.update(mongoose));
 };
