@@ -205,7 +205,7 @@ describe('Game Controller', function() {
             });
         });
 
-        it('Should receive a move json response if move is valid', function(done) {
+        it('Should receive a valid move json response if move is valid', function(done) {
             var moveNumber = 0
               , sanMove = 'e4';
 
@@ -224,7 +224,7 @@ describe('Game Controller', function() {
             });
         });
 
-        it('Should receive a move json response if move is valid', function(done) {
+        it('Should receive a valid move json response if move is valid', function(done) {
             var moveNumber = 1
               , moveObject = { from: 'g8', to: 'f6' };
 
@@ -251,7 +251,7 @@ describe('Game Controller', function() {
             .expect(404, done);
         });
 
-        it('Should receive a move json response if move exists', function(done) {
+        it('Should receive a valid move json response if move exists', function(done) {
             request(app)
             .get('/game/' + game._id + '/move/1')
             .set('X-Auth-Token', game.whiteToken)
