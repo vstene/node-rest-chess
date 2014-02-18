@@ -306,5 +306,18 @@ describe('Game Controller', function() {
                 done();
             });
         });
+
+        it('Should not receive a draw offer if it is my turn and the selected is not next move', function(done) {
+            request(app)
+            .post('/game/' + game._id + '/move/4/action')
+            .send({ action: 'offerDraw' })
+            .set('X-Auth-Token', game.whiteToken)
+            .expect(400, function(err, result) {
+                should.not.exists(err);
+                result.body.message.should.be.exactly('Requested move number is not the next move number.');
+
+                done();
+            });
+        });
     });
 });
