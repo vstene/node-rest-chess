@@ -12,7 +12,7 @@ module.exports = function(mongoose) {
             san: String,
             move: { from: String, to: String, promotion: String },
             time: Date,
-            meta: Array
+            action: Array
         }],
         fen: { type: String, default: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' },
         result: String

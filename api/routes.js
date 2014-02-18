@@ -2,7 +2,8 @@
 
 var TokenController = require('./controllers/token')
   , GameController  = require('./controllers/game')
-  , MoveController  = require('./controllers/move');
+  , MoveController  = require('./controllers/move')
+  , ActionController = require('./controllers/action');
 
 var BadRequest = require('./errors/').BadRequest;
 
@@ -36,4 +37,6 @@ exports.init = function(server, mongoose) {
 
     server.get('/game/:gameId/move/:moveNumber', MoveController.read);
     server.post('/game/:gameId/move/:moveNumber', MoveController.create(mongoose));
+
+    server.post('/game/:gameId/move/:moveNumber/action', ActionController.create(mongoose));
 };

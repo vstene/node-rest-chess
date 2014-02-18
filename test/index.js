@@ -215,10 +215,10 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.whiteToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time', 'meta']);
+                result.body.should.have.keys(['number', 'san', 'move', 'time', 'action']);
                 result.body.number.should.be.exactly(moveNumber);
                 result.body.san.should.be.exactly(sanMove);
-                result.body.meta.should.be.instanceOf(Array);
+                result.body.action.should.be.instanceOf(Array);
 
                 done();
             });
@@ -234,11 +234,11 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.blackToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time', 'meta']);
+                result.body.should.have.keys(['number', 'san', 'move', 'time', 'action']);
                 result.body.number.should.be.exactly(moveNumber);
                 result.body.move.from.should.be.exactly(moveObject.from);
                 result.body.move.to.should.be.exactly(moveObject.to);
-                result.body.meta.should.be.instanceOf(Array);
+                result.body.action.should.be.instanceOf(Array);
 
                 done();
             });
@@ -257,13 +257,27 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.whiteToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time', 'meta']);
+                result.body.should.have.keys(['number', 'san', 'move', 'time', 'action']);
                 result.body.number.should.be.exactly(1);
                 result.body.move.from.should.be.exactly('g8');
                 result.body.move.to.should.be.exactly('f6');
                 result.body.san.should.be.exactly('Nf6');
-                result.body.meta.should.be.instanceOf(Array);
+                result.body.action.should.be.instanceOf(Array);
 
+                done();
+            });
+        });
+    });
+
+    describe('Move action', function() {
+        it('Should not receive a draw offer if the move has been played', function(done) {
+            request(app)
+            .post('/game/' + game._id + '/move/1/action')
+            .send({ action: 'offerDraw' })
+            .set('X-Auth-Token', game.whiteToken)
+            .expect(400, function(err, result) {
+                should.not.exists(err);
+                result.body.message.should.be.exactly('Can not offer draw when the move is played, wait for your turn.');
                 done();
             });
         });

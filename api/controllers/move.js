@@ -47,7 +47,7 @@ exports.create = function(mongoose) {
             san: move.san,
             move: { from: move.from, to: move.to, promotion: move.promotion || undefined },
             time: Date.now(),
-            meta: []
+            action: []
         };
 
         Game.findByIdAndUpdate(req.game._id, { fen: chess.fen(), $push: { moves: mongoMove } }, { upsert: true }, function(err, game) {
