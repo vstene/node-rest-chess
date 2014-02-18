@@ -11,7 +11,8 @@ module.exports = function(mongoose) {
             number: Number,
             san: String,
             move: { from: String, to: String, promotion: String },
-            time: Date
+            time: Date,
+            meta: Array
         }],
         fen: { type: String, default: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' },
         result: String

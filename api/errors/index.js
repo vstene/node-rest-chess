@@ -10,6 +10,7 @@ function ServiceUnavailable(message) {
         message: message,
         constructorOpt: ServiceUnavailable
     });
+
     this.name = 'ServiceUnavailable';
 }
 

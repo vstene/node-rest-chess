@@ -72,7 +72,7 @@ describe('Game Controller', function() {
             .post('/game/' + game._id + '/move/0')
             .expect(401, function(err, result) {
                 should.not.exists(err);
-                result.body.message.should.be.exactly('No authentication token was provided');
+                result.body.message.should.be.exactly('No authentication token was provided.');
                 done();
             });
         });
@@ -215,9 +215,10 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.whiteToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time']);
+                result.body.should.have.keys(['number', 'san', 'move', 'time', 'meta']);
                 result.body.number.should.be.exactly(moveNumber);
                 result.body.san.should.be.exactly(sanMove);
+                result.body.meta.should.be.instanceOf(Array);
 
                 done();
             });
@@ -233,10 +234,11 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.blackToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time']);
+                result.body.should.have.keys(['number', 'san', 'move', 'time', 'meta']);
                 result.body.number.should.be.exactly(moveNumber);
                 result.body.move.from.should.be.exactly(moveObject.from);
                 result.body.move.to.should.be.exactly(moveObject.to);
+                result.body.meta.should.be.instanceOf(Array);
 
                 done();
             });
@@ -255,11 +257,12 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.whiteToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time']);
+                result.body.should.have.keys(['number', 'san', 'move', 'time', 'meta']);
                 result.body.number.should.be.exactly(1);
                 result.body.move.from.should.be.exactly('g8');
                 result.body.move.to.should.be.exactly('f6');
                 result.body.san.should.be.exactly('Nf6');
+                result.body.meta.should.be.instanceOf(Array);
 
                 done();
             });
