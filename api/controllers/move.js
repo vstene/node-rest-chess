@@ -4,7 +4,7 @@ var Errors = require('../errors')
   , Chess = require('chess.js').Chess;
 
 exports.read = function(req, res, next) {
-    var moveExists = req.game.moves.find(function(i) { return i.number === req.params.moveNumber; });
+    var moveExists = req.game.moves.find(function(i) { return i.moveNumber === req.params.moveNumber; });
 
     if (moveExists !== undefined) {
         res.json(req.game.moves[req.params.moveNumber]);
@@ -32,7 +32,7 @@ exports.create = function(mongoose) {
 
         if (moveObject === null) {
             return next(new Errors.BadRequest('A valid move payload is required.'));
-        } else if (req.game.moves.find(function(i) { return i.number === req.params.moveNumber; }) !== undefined) {
+        } else if (req.game.moves.find(function(i) { return i.moveNumber === req.params.moveNumber; }) !== undefined) {
             return next(new Errors.BadRequest('Move is already made, can not update.'));
         }
 
@@ -43,11 +43,10 @@ exports.create = function(mongoose) {
         }
 
         mongoMove = {
-            number: parseInt(req.params.moveNumber, 10),
+            moveNumber: parseInt(req.params.moveNumber, 10),
             san: move.san,
             move: { from: move.from, to: move.to, promotion: move.promotion || undefined },
-            time: Date.now(),
-            action: []
+            time: new Date()
         };
 
         options = { fen: chess.fen(), $push: { moves: mongoMove } };

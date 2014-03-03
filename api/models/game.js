@@ -8,11 +8,16 @@ module.exports = function(mongoose) {
         blackToken: { type: String, select: false, index: true },
         moves: [{
             _id: false,
-            number: Number,
+            moveNumber: Number,
             san: String,
             move: { from: String, to: String, promotion: String },
-            time: Date,
-            action: Array
+            time: Date
+        }],
+        meta: [{
+            _id: false,
+            moveNumber: Number,
+            action: String,
+            time: Date
         }],
         fen: { type: String, default: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' },
         result: String
