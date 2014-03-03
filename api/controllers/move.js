@@ -18,7 +18,7 @@ exports.create = function(mongoose) {
 
     return function(req, res, next) {
         var chess = new Chess(req.game.fen)
-          , moveObject, move, mongoMove;
+          , moveObject, move, mongoMove, options;
 
         if (typeof req.body === 'undefined') {
             return next(new Errors.BadRequest('Need to have a move payload.'));
@@ -50,7 +50,9 @@ exports.create = function(mongoose) {
             action: []
         };
 
-        Game.findByIdAndUpdate(req.game._id, { fen: chess.fen(), $push: { moves: mongoMove } }, { upsert: true }, function(err, game) {
+        options = { fen: chess.fen(), $push: { moves: mongoMove } };
+
+        Game.findByIdAndUpdate(req.game._id, options, { upsert: true }, function(err, game) {
             if (err) {
                 return next(new Errors.ServiceUnavailable('Could not save move to database, try again later.'));
             }
