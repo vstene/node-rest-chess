@@ -8,6 +8,15 @@ var request = require('supertest')
 
 var ServiceUnavailable = require('../api/errors/').ServiceUnavailable;
 
+var verifyTime = function(time) {
+    var date = new Date(time),
+        now  = new Date();
+
+    date.should.be.instanceof(Date);
+    date.toISOString().should.be.exactly(time);
+    date.toDateString().should.be.exactly(now.toDateString());
+};
+
 describe('Game Controller', function() {
     var game;
 
@@ -60,7 +69,7 @@ describe('Game Controller', function() {
             .post('/game')
             .end(function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['blackToken', 'whiteToken', '_id', 'fen', 'moves']);
+                result.body.should.have.keys(['blackToken', 'whiteToken', '_id', 'fen', 'moves', 'meta']);
 
                 done();
             });
@@ -226,10 +235,11 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.whiteToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time', 'action']);
-                result.body.number.should.be.exactly(moveNumber);
+                result.body.should.have.keys(['moveNumber', 'san', 'move', 'time']);
+                result.body.moveNumber.should.be.exactly(moveNumber);
                 result.body.san.should.be.exactly(sanMove);
-                result.body.action.should.be.instanceOf(Array);
+
+                verifyTime(result.body.time);
 
                 done();
             });
@@ -245,11 +255,12 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.blackToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time', 'action']);
-                result.body.number.should.be.exactly(moveNumber);
+                result.body.should.have.keys(['moveNumber', 'san', 'move', 'time']);
+                result.body.moveNumber.should.be.exactly(moveNumber);
                 result.body.move.from.should.be.exactly(moveObject.from);
                 result.body.move.to.should.be.exactly(moveObject.to);
-                result.body.action.should.be.instanceOf(Array);
+
+                verifyTime(result.body.time);
 
                 done();
             });
@@ -268,12 +279,13 @@ describe('Game Controller', function() {
             .set('X-Auth-Token', game.whiteToken)
             .expect(200, function(err, result) {
                 should.not.exists(err);
-                result.body.should.have.keys(['number', 'san', 'move', 'time', 'action']);
-                result.body.number.should.be.exactly(1);
+                result.body.should.have.keys(['moveNumber', 'san', 'move', 'time']);
+                result.body.moveNumber.should.be.exactly(1);
                 result.body.move.from.should.be.exactly('g8');
                 result.body.move.to.should.be.exactly('f6');
                 result.body.san.should.be.exactly('Nf6');
-                result.body.action.should.be.instanceOf(Array);
+
+                verifyTime(result.body.time);
 
                 done();
             });
@@ -315,6 +327,25 @@ describe('Game Controller', function() {
             .expect(400, function(err, result) {
                 should.not.exists(err);
                 result.body.message.should.be.exactly('Requested move number is not the next move number.');
+
+                done();
+            });
+        });
+
+        it('Should receive a draw offer if it is my turn and the selected move is next move', function(done) {
+            var moveNumber = 2;
+
+            request(app)
+            .put('/game/' + game._id + '/move/' + moveNumber)
+            .send({ action: 'offerDraw' })
+            .set('X-Auth-Token', game.whiteToken)
+            .expect(201, function(err, result) {
+                should.not.exists(err);
+                result.body.should.have.keys(['moveNumber', 'action', 'time']);
+                result.body.moveNumber.should.be.exactly(moveNumber);
+                result.body.action.should.be.exactly('drawoffer');
+
+                verifyTime(result.body.time);
 
                 done();
             });
