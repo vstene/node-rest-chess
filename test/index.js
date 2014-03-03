@@ -14,6 +14,8 @@ var verifyTime = function(time) {
 
     date.should.be.instanceof(Date);
     date.toISOString().should.be.exactly(time);
+
+    // Check that we are on the same date
     date.toDateString().should.be.exactly(now.toDateString());
 };
 
